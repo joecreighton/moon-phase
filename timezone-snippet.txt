@@ -1,0 +1,25 @@
+
+# timezone (-)HH.00 as integer floating point
+if [ "$TZLookup" = "true" ]; then
+  epoch=`date +%s`
+
+  BASEURL="https://maps.googleapis.com/maps/api/timezone/json"
+  timedata=`$CURL "${BASEURL}?location=${latitude},${longitude}&timestamp=${epoch}"`
+  if [ -z "$timedata" ]; then
+    do_fail "Failed to reach googleapis.com timezone API"
+  fi
+
+  offset=`echo $timedata |\
+   awk -F"dstOffset\" : " '{ print $2 }' | awk '{ print $1 }' | sed 's/,//'`
+
+  rawtime=`echo $timedata |\
+   awk -F"\"rawOffset\" : " '{ print $2 }' | awk '{ print $1 }' | sed 's/,//'`
+
+  rawtime=`expr $rawtime / 60`
+  min=`expr $rawtime % 60`
+  hrs=`expr $rawtime / 60`
+  TZ=$(printf "%02d.%02d" $hrs $min)
+else
+  TZ=`date +%z | sed 's/..$/.&/'`
+fi
+
