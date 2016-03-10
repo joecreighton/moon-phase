@@ -1,7 +1,7 @@
 # Moon Phase
 A widget for [Übersicht](http://tracesof.net/uebersicht/).  In beta.
 
-![Screenshot](Screenshot.jpg)
+![Screenshot](screenshot.jpg)
 
 Uses the following APIs
 * [freegeoip.net](http://freegeoip.net)
