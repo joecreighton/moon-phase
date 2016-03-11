@@ -1,7 +1,7 @@
 
 # set locale
 locale =
-  city             : 'Winnipeg'
+  city             : ''
   region           : ''
   country          : ''
 
