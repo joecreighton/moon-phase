@@ -177,16 +177,12 @@ renderMoonData: (data) ->
   moon_age = days_passed % synodic_month
   moon_age = (moon_age).toFixed(1)
 
-  # handle leading zeroes
-  fracillum = Number(data.illum)
-
-  # if moon phase isn't modulo 25, curphase is provided
-  if data.curphase?
-    curphase = data.curphase
-  else
-    curphase = data.closestphase.phase
-
   if @option.showPhase
+    # if moon phase isn't modulo 25, curphase is provided
+    if data.curphase?
+      curphase = data.curphase
+    else
+      curphase = data.closestphase.phase
     moonEl.find('.phase').text "#{curphase}"
 
 # ###FIXME
@@ -204,6 +200,8 @@ renderMoonData: (data) ->
     moonEl.find('.age').text "#{moon_age} days old"
 
   if @option.showIllum
+    # handle leading zeroes
+    fracillum = Number(data.illum)
     moonEl.find('.illum').text "#{fracillum}% illumination"
 
   if @option.showCoords
@@ -241,16 +239,16 @@ renderMoonData: (data) ->
         my_time = d.time
       time.append "<div>#{my_time}</div>"
 
-  # closest phase looks both backwards and fowards: determine which
-  clday = new Date(data.closestphase.date + " " + data.closestphase.time)
-
-  # compare in milliseconds to avoid string issues
-  if clday.getTime() > today.getTime()
-    clause = 'is'
-  else
-    clause = 'was'
-
   if @option.showClosest
+    # closest phase looks both backwards and fowards: determine which
+    clday = new Date(data.closestphase.date + " " + data.closestphase.time)
+
+    # compare in milliseconds to avoid string issues
+    if clday.getTime() > today.getTime()
+      clause = 'is'
+    else
+      clause = 'was'
+
     moonEl.find('.clphase').text "Closest phase #{clause} #{data.closestphase.phase}"
 
     if @option.showCloseDay
