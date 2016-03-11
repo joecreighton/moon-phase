@@ -39,9 +39,9 @@ if [ "$IPLookup" = "true" ]; then
   coords=`$CURL http://freegeoip.net/csv/`
 
   if [ -z "$coords" ]; then
-    : # noop
+    do_fail "failed to reach freegeoip.net API"
   elif [ "$coords" = "Try again later" ]; then
-    : # noop
+    do_fail "try freegeoip.net again later"
   else
     city=`echo $coords | awk -F"," '{ print $6 }'`
     region=`echo $coords | awk -F"," '{ print $5 }'`
@@ -56,17 +56,15 @@ city=`echo $city | sed 's/ /%20/g'`
 region=`echo $region | sed 's/ /%20/g'`
 country=`echo $country | sed 's/ /%20/g'`
 
-# if freegeoip fails, or if requested, find our coords based on location
-if [ -z "$coords" -o "$IPLookup" = "false" -o "$coords" = "Try again later" ]; then
-  BASEURL="https://maps.googleapis.com/maps/api/geocode/json"
-  coords=`$CURL "${BASEURL}?address=${city},${region},${country}&sensor=false"`
-  if [ -z "$coords" ]; then
-    do_fail "failed to reach googleapis.com geocode API"
-  fi
-  latlong=`echo $coords | awk -F"\"location\" :" '{ print $2 }'`
-  latitude=`echo $latlong | sed 's/,/ /g' | awk '{ print $4 }'`
-  longitude=`echo $latlong | sed 's/,/ /g' | awk '{ print $7 }'`
+# find our coords based on location
+BASEURL="https://maps.googleapis.com/maps/api/geocode/json"
+coords=`$CURL "${BASEURL}?address=${city},${region},${country}&sensor=false"`
+if [ -z "$coords" ]; then
+  do_fail "failed to reach googleapis.com geocode API"
 fi
+latlong=`echo $coords | awk -F"\"location\" :" '{ print $2 }'`
+latitude=`echo $latlong | sed 's/,/ /g' | awk '{ print $4 }'`
+longitude=`echo $latlong | sed 's/,/ /g' | awk '{ print $7 }'`
 
 # get the illumination table using the form
 # http://aa.usno.navy.mil/data/docs/MoonFraction.php

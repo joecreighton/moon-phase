@@ -1,7 +1,7 @@
 
 # set locale
 locale =
-  city             : ''
+  city             : 'Winnipeg'
   region           : ''
   country          : ''
 
@@ -211,7 +211,7 @@ renderMoonData: (data) ->
     lon = Math.abs((data.lon).toFixed(2))
     moonEl.find('.coords').text "#{lat}#{latcard} #{lon}#{loncard}"
 
-  # upcoming phenomenon and times; order based on current time
+  # upcoming phenomenae and times; order based on current time
   if @option.showRUS
     count = Object.keys(data.moondata).length
 
