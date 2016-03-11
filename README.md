@@ -27,8 +27,8 @@ If locale is set, you save an API call based on your IP address.
 
 The font, icon, and colour settings do what you'd expect.
 * Fonts are scaled with respect to others to give the widget balance: change at your discretion.
-* Colours have been tested with white text on dark-grey and black text on light-grey. Giving things a
-splash of colour might be the perfect tweak for you.
+* Colours have been tested with white text on dark-grey and black text on light-grey, with two opacity
+variables. Giving things a splash of colour might be the perfect tweak for you.
 * Two icon sets can be used: one where pixels represent the `lit` side of the moon, the other where
 pixels represent the `shadow` side of the moon.
 
