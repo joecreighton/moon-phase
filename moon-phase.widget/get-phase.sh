@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# syntax: get-phase [city] [region] [country] [IPLookup]
+# syntax: get-phase [city] [region] [country]
 # returns: customized JSON data set of moon data from USNO
 #
 

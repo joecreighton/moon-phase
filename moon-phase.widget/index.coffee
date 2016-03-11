@@ -13,7 +13,10 @@ option =
   fontColorMuted   : '#FFF'    # for RUS label; at 50% opacity
   iconSet          : 'lit'     # pixels are "lit" or "shadow" side of moon
   iconColor        : '#FFF'    # pixels
-  iconBackground   : '#FFF'    # at 10% opacity
+  iconBackground   : '#FFF'    #
+  iconOpacity      : 0.10      # percentage (0.01-1.00); 0 is transparent
+  widgetBackground : '#FFF'    #
+  widgetOpacity    : 0.02      # percentage (0.01-1.00); 0 is transparent
   showPhase        : true      # the current moon phase
   showIcon         : true      #
   showCity         : true      #
@@ -39,7 +42,7 @@ style: """
   top              : 15px
   border-radius    : 20px
   padding          : 10px
-  background       : rgba(#{option.iconBackground}, 0.1)
+  background       : rgba(#{option.widgetBackground}, #{option.widgetOpacity})
   display          : inline-block
   vertical-align   : bottom
   line-height      : 1.5
@@ -69,7 +72,7 @@ style: """
     max-width      : icon-size * 3
     max-height     : icon-size * 3
     border-radius  : 50%
-    background     : rgba(#{option.iconBackground}, 0.1)
+    background     : rgba(#{option.iconBackground}, #{option.iconOpacity})
 
     img
       width        : 100%
