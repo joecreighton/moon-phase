@@ -218,7 +218,10 @@ renderMoonData: (data) ->
     phen = moonEl.find('.phenomenae')
     phen.empty()
     if count < 3
-      phenName = @returnPhenomenae("#{data.prevmoondata[0].phen}")
+      if data.prevmoondata?
+        phenName = @returnPhenomenae("#{data.prevmoondata[0].phen}")
+      else
+        phenName = @returnPhenomenae("#{data.nextmoondata[0].phen}")
       phen.append "<div>#{phenName}</div>"
     for d in data.moondata
       phenName = @returnPhenomenae("#{d.phen}")
@@ -227,11 +230,13 @@ renderMoonData: (data) ->
     time = moonEl.find('.phentimes')
     time.empty()
     if count < 3
-      if @option.showAMPM
-        my_time = @returnAMPM(data.prevmoondata[0].time)
-      else
+      if data.prevmoondata?
         my_time = data.prevmoondata[0].time
-      time.append "<div>#{my.time}</div>"
+      else
+        my_time = data.nextmoondata[0].time
+      if @option.showAMPM
+        my_time = @returnAMPM(my_time)
+      time.append "<div>#{my_time}</div>"
     for d in data.moondata
       if @option.showAMPM
         my_time = @returnAMPM(d.time)
