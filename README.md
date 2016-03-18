@@ -24,14 +24,14 @@ The font, icon, and colour settings do what you'd expect.
 * All text is one colour, the header `Rises, Upper Transit, Sets` can use another.
 * Two icon sets can be used: one where pixels represent the `lit` side of the moon, the other where
 pixels represent the `shadow` side of the moon.
-* There's an additional option (`showAMPM`) to use a 12-hour clock instead of a 24-hour clock.
-
-![Shadow moon](shadow-moon.jpg)
-
 * All but two data elements -- moon icon and phase name -- can be disabled by setting their option to
 `false`.
 
 ![Minimalist](minimalist.jpg)
+
+* There's an additional option (`showAMPM`) to use a 12-hour clock instead of a 24-hour clock.
+
+![Shadow moon](shadow-moon.jpg)
 
 ## Credits
 Much inspiration was taken from Felix Hageloh's [Weather Widget](http://github.com/felixhageloh/weather-widget)
