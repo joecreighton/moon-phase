@@ -1,7 +1,7 @@
 # Moon Phase
 A widget for [Übersicht](http://tracesof.net/uebersicht/).  In beta.
 
-![Screenshot](screenshot.jpg)
+![Lit moon](lit-moon.jpg)
 
 Uses the following APIs
 * [freegeoip.net](http://freegeoip.net)
@@ -16,27 +16,26 @@ Uses the following APIs
 ## Locale and Options.
 These can be set by editing the `index.coffee` file.
 
-If locale is set, you save an API call based on your IP address.
+The locale is empty by default and will do a lookup based on your IP or, save an API call and set it.
 
     ```
     locale =
-      city     : 'Cupertino'
-      region   : 'CA'
-      country  : 'USA'
+      city     : 'Amsterdam'
+      region   : 'Netherlands'
     ```
 
 The font, icon, and colour settings do what you'd expect.
 * Fonts are scaled with respect to others to give the widget balance: change at your discretion.
-* Colours have been tested with white text on dark-grey and black text on light-grey, with two opacity
-variables. Giving things a splash of colour might be the perfect tweak for you.
+* All text is one colour, the header `Rises     Upper Transit     Sets` another.
 * Two icon sets can be used: one where pixels represent the `lit` side of the moon, the other where
 pixels represent the `shadow` side of the moon.
 
-Any row of presented data can be disabled by setting their option to `false`. There is an additional
-option (`showAMPM`) to use a 12-hour clock instead of the default 24-hour clock.
+![Shadow moon](shadow-moon.jpg)
 
-The top-down order of presented data can be changed by adjusting the order of the `div` elements in the
-`render` function.
+All but two data elements -- moon icon and phase name -- can be disabled by setting their option to
+`false`. There's an additional option (`showAMPM`) to use a 12-hour clock instead of a 24-hour clock.
+
+![Minimalist](minimalist.jpg)
 
 ## Credits
 Much inspiration was taken from Felix Hageloh's [Weather Widget](http://github.com/felixhageloh/weather-widget)
