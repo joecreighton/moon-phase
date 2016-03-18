@@ -47,6 +47,8 @@ style: """
   border-radius     : 25px
   line-height       : 1.5
   padding           : 5px
+  padding-left      : 15px
+  padding-right     : 15px
 
   icon-size = #{option.fontSize * 7}px
 
