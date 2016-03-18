@@ -13,7 +13,7 @@ Uses the following APIs
 * [US Naval Observatory](http://www.usno.navy.mil/USNO/astronomical-applications)
   for moon phase information based on latitude, longitude, and local time zone.
 
-## Locale and Options.
+## Locale and Options
 These can be set by editing the `index.coffee` file.
 
 The locale is empty by default and will do a lookup based on your IP or, save an API call and set it.
