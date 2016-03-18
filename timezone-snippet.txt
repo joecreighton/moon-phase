@@ -11,10 +11,10 @@ if [ "$TZLookup" = "true" ]; then
 
   offset=`echo $timedata |\
    awk -F"dstOffset\" : " '{ print $2 }' | awk '{ print $1 }' | sed 's/,//'`
-
   rawtime=`echo $timedata |\
    awk -F"\"rawOffset\" : " '{ print $2 }' | awk '{ print $1 }' | sed 's/,//'`
 
+  rawtime=`expr $rawtime + $offset`
   rawtime=`expr $rawtime / 60`
   min=`expr $rawtime % 60`
   hrs=`expr $rawtime / 60`
