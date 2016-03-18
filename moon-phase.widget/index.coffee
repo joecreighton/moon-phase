@@ -1,130 +1,119 @@
 
 # set locale
 locale =
-  city             : ''
-  region           : ''
-  country          : ''
+  city              : ''
+  region            : ''
+
 
 # set preferences
 option =
-  fontName         : 'Futura'
-  fontSize         : 14        # scales the overall widget size
-  fontColor        : '#FFF'    #
-  fontColorMuted   : '#FFF'    # for RUS label; at 50% opacity
-  iconSet          : 'lit'     # pixels are "lit" or "shadow" side of moon
-  iconColor        : '#FFF'    # pixels
-  iconBackground   : '#FFF'    #
-  iconOpacity      : 0.10      # percentage (0.01-1.00); 0 is transparent
-  widgetBackground : '#FFF'    #
-  widgetOpacity    : 0.02      # percentage (0.01-1.00); 0 is transparent
-  showPhase        : true      # the current moon phase
-  showIcon         : true      #
-  showCity         : true      #
-  showCoords       : true      # latitude and longitude
-  showAge          : true      # age in days
-  showIllum        : true      # percentage illumination
-  showRUS          : true      # w/separator, upcoming times for rise, upper transit, set
-  showClosest      : true      # w/separator, closest phase, either ahead or behind
-  showCloseDay     : true      #  +-> closest phase date, iff showClosest is true
-  showAMPM         : false     # default is military time
+  fontName          : 'Futura'
+  fontSize          : 14        # scales the overall widget size
+  fontColor         : '#FFF'    #
+  fontColorMuted    : '#FFF'    # for RUS label; at 50% opacity
 
-refreshFrequency   : '1hr'     # 1hr is best accuracy for moon illumination data
+  iconSet           : 'lit'     # pixels to be 'lit' or 'shadow' side of moon
+  iconColor         : '#FFF'    #
+
+  widgetBackground  : '#FFF'    #
+  widgetOpacity     : 0.00      # percentage (0.01-1.00); 0 is transparent
+
+  showCity          : true      #
+  showCoords        : true      # latitude and longitude
+  showAge           : true      # age in days
+  showIllum         : true      # percentage illumination
+  showRUS           : true      # w/separator, rise/upper transit/set times for today
+  showClosest       : true      # w/separator, closest phase (either ahead or behind)
+  showCloseDay      : true      #  +-> closest phase date (iff showClosest is true)
+  showAMPM          : false     # default is military time
+
+
+refreshFrequency    : '1hr'     # 1hr is best accuracy from moon illumination data
 
 
 # do the heavy lifting; escape spaces
-command: "moon-phase.widget/get-phase.sh \"#{locale.city}\"   \
-                                         \"#{locale.region}\" \
-                                         \"#{locale.country}\""
+command: "moon-phase.widget/get-phase.sh \"#{locale.city}\"  \
+                                         \"#{locale.region}\""
 
 
 style: """
-  left             : 85px
-  top              : 15px
-  border-radius    : 20px
-  padding          : 10px
-  background       : rgba(#{option.widgetBackground}, #{option.widgetOpacity})
-  display          : inline-block
-  vertical-align   : bottom
-  line-height      : 1.5
+  color             : #{option.fontColor}
+  text-align        : center
+  font-family       : #{option.fontName}
+  left              : 85px
+  top               : 15px
 
-  color            : #{option.fontColor}
-  font-family      : #{option.fontName}
-  text-align       : center
+  background-color  : rgba(#{option.widgetBackground}, #{option.widgetOpacity})
+  border-radius     : 25px
+  line-height       : 1.5
+  padding           : 5px
 
-  icon-size = #{option.fontSize * 5}px
+  icon-size = #{option.fontSize * 7}px
 
-  .error
-    font-size      : #{option.fontSize}px
-    color          : #FF0000
-    background     : rgba(#000000, 0.5)
+  @font-face
+    font-family     : 'Weather'
+    src url(moon-phase.widget/moon-icons.svg) format('svg')
 
-  .icon
-    display        : inline-block
-    font-family    : 'Weather'
-    vertical-align : middle
-    font-size      : #{option.fontSize}px
-    vertical-align : middle
-    text-align     : center
-
-    fill           : #{option.iconBackground}
-    width          : icon-size * 3
-    height         : icon-size * 3
-    max-width      : icon-size * 3
-    max-height     : icon-size * 3
-    border-radius  : 50%
-    background     : rgba(#{option.iconBackground}, #{option.iconOpacity})
-
-    img
-      width        : 100%
-
-    @font-face
-      font-family  : 'Weather'
-      src url(weather.widget/moon-icons.svg) format('svg')
+  .moon
+    display         : inline-block
+    position        : relative
+    text-align      : center
+    white-space     : nowrap
+    width           : 100%
 
   .current
-    position       : relative
-    display        : inline-block
-    white-space    : nowrap
-    text-align     : center
+    display         : table
 
-  .current .phase
-    font-size      : #{option.fontSize * 1.7}px
-    font-weight    : bold
-  .current .illum
-    font-size      : #{option.fontSize}px
-  .current .age
-    font-size      : #{option.fontSize}px
+  .icon
+    color           : #{option.iconColor}
+    display         : table-cell
+    font-family     : Weather
+    font-size       : icon-size
+    vertical-align  : middle
 
-  .current .phenomenae
-    display        : flex
-    justify-content: space-between
-  .current .phenomenae div
-    color          : rgba(#{option.fontColorMuted}, 0.5)
-    font-size      : #{option.fontSize * 0.75}px
-    width          : 30%
+  .data-elements
+    display         : table-cell
+    padding         : #{option.fontSize}px
+    vertical-align  : middle
 
-  .current .phentimes
-    display        : flex
-    justify-content: space-between
-  .current .phentimes div
-    font-size      : #{option.fontSize}px
-    width          : 30%
+  .phase
+    font-size       : #{option.fontSize * 1.5}px
+    font-weight     : bold
+  .city
+    font-size       : #{option.fontSize * 1.25}px
+  .coords
+    font-size       : #{option.fontSize * 0.80}px
+  .age
+    font-size       : #{option.fontSize}px
+  .illum
+    font-size       : #{option.fontSize}px
 
-  .current .location
-    font-size      : #{option.fontSize * 1.5}px
+  .phennames
+    display         : flex
+    justify-content : space-between
+  .phennames div
+    color           : rgba(#{option.fontColorMuted}, 0.5)
+    font-size       : #{option.fontSize * 0.80}px
+    width           : 30%
+  .phentimes
+    display         : flex
+    justify-content : space-between
+  .phentimes div
+    font-size       : #{option.fontSize}px
+    width           : 30%
 
-  .current .coords
-    font-size      : #{option.fontSize}px
+  .separator
+    border-top      : #{option.fontSize / 7.5}px solid rgba(#{option.fontColor}, 0.5)
 
-  .current .separator
-    background     : #666666
-    border-top     : #{option.fontSize / 10}px solid rgba(#{option.fontColor}, 0.5)
-    height         : #{option.fontSize / 10}px
+  .clphase
+    font-size       : #{option.fontSize * 0.85}px
+  .cldate
+    font-size       : #{option.fontSize * 0.85}px
 
-  .closest .clphase
-    font-size      : #{option.fontSize * 0.85}px
-  .closest .cldate
-    font-size      : #{option.fontSize * 0.85}px
+  .error
+    font-size       : #{option.fontSize}px
+    color           : #FF0000
+    background      : rgba(#000000, 0.5)
 
 """
 
@@ -135,30 +124,33 @@ option : option
 render: -> """
 <div class='moon'>
   <div class='current'>
-
-    <div class='phase'></div>
-    <div class='icon' #{ 'style="display:none; border-top: 0"' unless @option.showIcon }></div>
-    <div class='location'></div>
-    <div class='coords'></div>
-    <div class='age'></div>
-    <div class='illum'></div>
-
-    <div class='separator' #{ 'style="display:none; border-top: 0"' unless @option.showRUS }></div>
-    <div class='phenomenae'></div>
-    <div class='phentimes'></div>
-
-    <div class='closest'>
-      <div class='separator' #{ 'style="display:none; border-top: 0"' unless @option.showClosest }></div>
-      <div class='clphase'></div>
-      <div class='cldate'></div>
+    <div class='icon'></div>
+    <div class='data-elements'>
+      <div class='phase'></div>
+      <div class='city'   #{ 'style="display:none; border-top: 0"' unless @option.showCity }></div>
+      <div class='coords' #{ 'style="display:none; border-top: 0"' unless @option.showCoords }></div>
+      <div class='age'    #{ 'style="display:none; border-top: 0"' unless @option.showAge }></div>
+      <div class='illum'  #{ 'style="display:none; border-top: 0"' unless @option.showIllum }></div>
     </div>
+  </div>
 
+  <div class='phenomena'>
+    <div class='separator' #{ 'style="display:none; border-top: 0"' unless @option.showRUS }></div>
+    <div class='phennames'></div>
+    <div class='phentimes'></div>
+  </div>
+
+  <div class='closest'>
+    <div class='separator' #{ 'style="display:none; border-top: 0"' unless @option.showClosest }></div>
+    <div class='clphase'></div>
+    <div class='cldate'></div>
+  </div>
 </div>
 """
 
 
 renderMoonData: (data) ->
-  moonEl = @$domEl.find('.current')
+  moonEl = @$domEl.find('.moon')
 
   today = new Date()
 
@@ -177,24 +169,23 @@ renderMoonData: (data) ->
   moon_age = days_passed % synodic_month
   moon_age = (moon_age).toFixed(1)
 
-  if @option.showPhase
-    # if moon phase isn't modulo 25, curphase is provided
-    if data.curphase?
-      curphase = data.curphase
-    else
-      curphase = data.closestphase.phase
-    moonEl.find('.phase').text "#{curphase}"
-
 # ###FIXME
-  if @option.showIcon
-    #icon = @getIcon(Math.floor(moon_age), @option.iconSet)
-    #console.error icon
-    #console.error 'Moon age:', moon_age
-    #console.error 'Floored :', Math.floor(moon_age)
-    moonEl.find('.icon').html @getIcon(Math.floor(moon_age), @option.iconSet)
+  console.error 'Moon age:', moon_age
+  console.error 'Floored :', Math.floor(moon_age)
+  console.error 'Rounded :', Math.round(moon_age)
+  icon = @getIcon(Math.round(moon_age), @option.iconSet)
+  console.error icon
+  moonEl.find('.icon').html @getIcon(Math.round(moon_age), @option.iconSet)
+
+  # if moon phase isn't modulo 25, curphase is provided
+  if data.curphase?
+    curphase = data.curphase
+  else
+    curphase = data.closestphase.phase
+  moonEl.find('.phase').text "#{curphase}"
 
   if @option.showCity
-    moonEl.find('.location').text "#{data.city}"
+    moonEl.find('.city').text "#{data.city}"
 
   if @option.showAge
     moonEl.find('.age').text "#{moon_age} days old"
@@ -211,20 +202,20 @@ renderMoonData: (data) ->
     lon = Math.abs((data.lon).toFixed(2))
     moonEl.find('.coords').text "#{lat}#{latcard} #{lon}#{loncard}"
 
-  # upcoming phenomenae and times; order based on current time
+  # upcoming phennames and times; order based on current time
   if @option.showRUS
     count = Object.keys(data.moondata).length
 
-    phen = moonEl.find('.phenomenae')
+    phen = moonEl.find('.phennames')
     phen.empty()
     if count < 3
       if data.prevmoondata?
-        phenName = @returnPhenomenae("#{data.prevmoondata[0].phen}")
+        phenName = @returnPhennames("#{data.prevmoondata[0].phen}")
       else
-        phenName = @returnPhenomenae("#{data.nextmoondata[0].phen}")
+        phenName = @returnPhennames("#{data.nextmoondata[0].phen}")
       phen.append "<div>#{phenName}</div>"
     for d in data.moondata
-      phenName = @returnPhenomenae("#{d.phen}")
+      phenName = @returnPhennames("#{d.phen}")
       phen.append "<div>#{phenName}</div>"
 
     time = moonEl.find('.phentimes')
@@ -292,7 +283,7 @@ returnAMPM: (time) ->
   return my_time
 
 
-returnPhenomenae: (code) ->
+returnPhennames: (code) ->
   if code is "R" then return "Rises"
   if code is "U" then return "Upper Transit"
   if code is "S" then return "Sets"
@@ -305,16 +296,14 @@ getIcon: (code, iconSet) ->
     @getShadowIcon(code)
 
 getLitIcon: (code) ->
-  if code < 0 or code > 29
-    return @iconLitMapping['na']
-  else
-    @iconLitMapping[code]
+  if code < 0  then code = 0
+  if code > 28 then code = 28
+  @iconLitMapping[code]
 
 getShadowIcon: (code) ->
-  if code < 0 or code > 29
-    return @iconShadowMapping['na']
-  else
-    @iconShadowMapping[code1]
+  if code < 0  then code = 0
+  if code > 28 then code = 28
+  @iconShadowMapping[code]
 
 iconLitMapping:
   0  : "&#xf095;"
