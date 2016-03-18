@@ -16,13 +16,8 @@ Uses the following APIs
 ## Locale and Options
 These can be set by editing the `index.coffee` file.
 
-The locale is empty by default and will do a lookup based on your IP or, save an API call and set it.
-
-    ```
-    locale =
-      city     : 'Amsterdam'
-      region   : 'Netherlands'
-    ```
+The locale (city, region) is empty by default and will do a lookup based on your IP.
+I recommend you save yourself an API call and set it.
 
 The font, icon, and colour settings do what you'd expect.
 * Fonts are scaled with respect to others to give the widget balance: change at your discretion.
