@@ -16,7 +16,7 @@ Uses the following APIs
 ## Locale and Options
 These can be set by editing the `index.coffee` file.
 
-The locale (city, region) is empty by default and will do a lookup based on your IP.
+If no locale (city, region) is set, the widget will do a lookup based on your IP.
 I recommend saving yourself an API call and setting it: freegeoip doesn't always cooperate.
 
 The font, icon, and colour settings do what you'd expect.
