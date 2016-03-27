@@ -1,14 +1,14 @@
 
-# set locale
+# please set locale
 locale =
-  city              : ''
-  region            : ''
+  city              : 'Houston'
+  region            : 'TX'
 
 
 # set preferences
 option =
   fontName          : 'Futura'
-  fontSize          : 14        # scales the overall widget size
+  fontSize          : 18        # scales the overall widget size
   fontColor         : '#FFF'    #
   fontColorMuted    : '#FFF'    # for RUS label; at 50% opacity
 
@@ -40,8 +40,8 @@ style: """
   color             : #{option.fontColor}
   text-align        : center
   font-family       : #{option.fontName}
-  left              : 85px
-  top               : 15px
+  left              : 60px
+  top               : 10px
 
   background-color  : rgba(#{option.widgetBackground}, #{option.widgetOpacity})
   border-radius     : 25px
@@ -95,7 +95,7 @@ style: """
     justify-content : space-between
   .phennames div
     color           : rgba(#{option.fontColorMuted}, 0.5)
-    font-size       : #{option.fontSize * 0.80}px
+    font-size       : #{option.fontSize * 0.70}px
     width           : 30%
   .phentimes
     display         : flex
@@ -163,61 +163,69 @@ renderMoonData: (data) ->
   # the most recent new moon; TODO: log last new moon seen to a file?
   new_moon = new Date('03/09/2016 01:54 GMT')
 
-  #today = new Date('03/08/2016 18:35 CST')
-  #new_moon = new Date('02/08/2016 14:39 GMT')
-
   ms_per_day = 1000 * 60 * 60  * 24
   days_passed = (today.getTime() - new_moon.getTime()) / ms_per_day
   moon_age = days_passed % synodic_month
-  moon_age = (moon_age).toFixed(1)
+
+  #
+  # moon icon and phase name
+  #
+
+  if data.curphase?
+    curphase = data.curphase
+  else
+    curphase = data.closestphase.phase
+    # nudge things back a bit for the icon render?
+    if moon_age > 0.5
+      moon_age = moon_age - 0.5
 
 # ###FIXME
   console.error 'Moon age:', moon_age
   console.error 'Floored :', Math.floor(moon_age)
   console.error 'Rounded :', Math.round(moon_age)
-  icon = @getIcon(Math.round(moon_age), @option.iconSet)
+  icon = @getIcon(Math.floor(moon_age), @option.iconSet)
   console.error icon
-  moonEl.find('.icon').html @getIcon(Math.round(moon_age), @option.iconSet)
 
-  # if moon phase isn't modulo 25, curphase is provided
-  if data.curphase?
-    curphase = data.curphase
-  else
-    curphase = data.closestphase.phase
+  moon_age = (moon_age).toFixed(1)
+  moonEl.find('.icon').html @getIcon(Math.floor(moon_age), @option.iconSet)
   moonEl.find('.phase').text "#{curphase}"
+
+  #
+  # optional data elements
+  #
 
   if @option.showCity
     moonEl.find('.city').text "#{data.city}"
-
-  if @option.showAge
-    moonEl.find('.age').text "#{moon_age} days old"
-
-  if @option.showIllum
-    # handle leading zeroes
-    fracillum = Number(data.illum)
-    moonEl.find('.illum').text "#{fracillum}% illumination"
 
   if @option.showCoords
     if data.lat > 0 then latcard = 'N' else latcard = 'S'
     if data.lon > 0 then loncard = 'E' else loncard = 'W'
     lat = Math.abs((data.lat).toFixed(2))
     lon = Math.abs((data.lon).toFixed(2))
-    moonEl.find('.coords').text "#{lat}#{latcard} #{lon}#{loncard}"
+    moonEl.find('.coords').text "#{lat}\u00B0#{latcard} #{lon}\u00B0#{loncard}"
 
-  # upcoming phennames and times; order based on current time
+  if @option.showAge
+    moonEl.find('.age').text "#{moon_age} days old"
+
+  if @option.showIllum
+    moonEl.find('.illum').text "#{data.illum}% illumination"
+
+  # upcoming phenomenon names and times; order based on 24hr day
   if @option.showRUS
+    # all events may not occur within the 00:00-23;59 day
     count = Object.keys(data.moondata).length
 
     phen = moonEl.find('.phennames')
     phen.empty()
     if count < 3
       if data.prevmoondata?
-        phenName = @returnPhennames("#{data.prevmoondata[0].phen}")
-      else
-        phenName = @returnPhennames("#{data.nextmoondata[0].phen}")
-      phen.append "<div>#{phenName}</div>"
+        phenName = @returnPhenNames("#{data.prevmoondata[0].phen}", "prev")
+        phen.append "<div>#{phenName}</div>"
+      else if data.nextmoondata?
+        phenName = @returnPhenNames("#{data.nextmoondata[0].phen}", "next")
+        phen.append "<div>#{phenName}</div>"
     for d in data.moondata
-      phenName = @returnPhennames("#{d.phen}")
+      phenName = @returnPhenNames("#{d.phen}", "curr")
       phen.append "<div>#{phenName}</div>"
 
     time = moonEl.find('.phentimes')
@@ -225,11 +233,14 @@ renderMoonData: (data) ->
     if count < 3
       if data.prevmoondata?
         my_time = data.prevmoondata[0].time
-      else
+        if @option.showAMPM
+          my_time = @returnAMPM(my_time)
+        time.append "<div>#{my_time}</div>"
+      else if data.nextmoondata?
         my_time = data.nextmoondata[0].time
-      if @option.showAMPM
-        my_time = @returnAMPM(my_time)
-      time.append "<div>#{my_time}</div>"
+        if @option.showAMPM
+          my_time = @returnAMPM(my_time)
+        time.append "<div>#{my_time}</div>"
     for d in data.moondata
       if @option.showAMPM
         my_time = @returnAMPM(d.time)
@@ -285,10 +296,19 @@ returnAMPM: (time) ->
   return my_time
 
 
-returnPhennames: (code) ->
-  if code is "R" then return "Rises"
-  if code is "U" then return "Upper Transit"
-  if code is "S" then return "Sets"
+returnPhenNames: (code, tense) ->
+  # R=Rises
+  if code is "R" and tense is "prev" then return "Rose Yesterday"
+  if code is "R" and tense is "curr" then return "Rises"
+  if code is "R" and tense is "next" then return "Rises Tomorrow"
+  # UT=Upper Transit
+  if code is "U" and tense is "prev" then return "Upper Transit Yesterday"
+  if code is "U" and tense is "curr" then return "Upper Transit"
+  if code is "U" and tense is "next" then return "Upper Transit Tomorrow"
+  # S=Sets
+  if code is "S" and tense is "prev" then return "Set Yesterday"
+  if code is "S" and tense is "curr" then return "Sets"
+  if code is "S" and tense is "next" then return "Sets Tomorrow"
 
 
 getIcon: (code, iconSet) ->
@@ -298,13 +318,13 @@ getIcon: (code, iconSet) ->
     @getShadowIcon(code)
 
 getLitIcon: (code) ->
-  if code < 0  then code = 0
-  if code > 28 then code = 28
+  # wrap day 29.x around to zero again
+  if code > 28 then code = 0
   @iconLitMapping[code]
 
 getShadowIcon: (code) ->
-  if code < 0  then code = 0
-  if code > 28 then code = 28
+  # wrap day 29.x around to zero again
+  if code > 28 then code = 0
   @iconShadowMapping[code]
 
 iconLitMapping:
@@ -337,7 +357,6 @@ iconLitMapping:
   26 : "&#xf0af;"
   27 : "&#xf0b0;"
   28 : "&#xf095;"
-  na : "&#xf00c;"
 
 iconShadowMapping:
   0  : "&#xf0eb;"
@@ -369,5 +388,4 @@ iconShadowMapping:
   26 : "&#xf0e9;"
   27 : "&#xf0ea;"
   28 : "&#xf0eb;"
-  na : "&#xf00c;"
 

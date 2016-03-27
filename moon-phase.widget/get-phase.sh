@@ -10,7 +10,7 @@ CURL="curl -s"
 # USNO API ID is optional but let's pass one so they know, as requested
 USNOID=UberMoon
 
-# we need to write a text table to a file; clean up previous runs
+# we need to write a text table to a file; clean up previous/failed runs
 /bin/rm -f moon-phase.widget/illumtab.txt.*
 ILLUMTAB="moon-phase.widget/illumtab.txt.$$"
 
@@ -24,20 +24,22 @@ do_fail()
 }
 
 # pull passed vars
-if [ "$#" -eq 2 ]; then
-  IPLookup="false"
+if [ $# -eq 2 ]; then
+  getIP="false"
   city=$1; region=$2
 
   # failsafe!
   if [ -z "$city" -a -z "$region" ]; then
-    IPLookup="true"
+    getIP="true"
   fi
 else
-  IPLookup="true"
+  getIP="true"
 fi
 
+#
 # find our coords based on IP
-if [ "$IPLookup" = "true" ]; then
+#
+if [ "$getIP" = "true" ]; then
   coords=`$CURL http://freegeoip.net/csv/`
 
   if [ -z "$coords" ]; then
@@ -47,6 +49,7 @@ if [ "$IPLookup" = "true" ]; then
   else
     city=`echo $coords | awk -F"," '{ print $6 }'`
     region=`echo $coords | awk -F"," '{ print $5 }'`
+    country=`echo $coords | awk -F"," '{ print $4 }'`
     latitude=`echo $coords | awk -F"," '{ print $9 }'`
     longitude=`echo $coords | awk -F"," '{ print $10 }'`
   fi
@@ -55,9 +58,12 @@ fi
 # encode spaces
 city=`echo $city | sed 's/ /%20/g'`
 region=`echo $region | sed 's/ /%20/g'`
+country=`echo $country | sed 's/ /%20/g'`
 
+#
 # if freegeoip fails, or if requested, find our coords based on location
-if [ -z "$coords" -o "$IPLookup" = "false" -o "$coords" = "Try again later" ]; then
+#
+if [ -z "$coords" -o "$getIP" = "false" -o "$coords" = "Try again later" ]; then
   BASEURL="https://maps.googleapis.com/maps/api/geocode/json"
   coords=`$CURL "${BASEURL}?address=${city},${region},${country}&sensor=false"`
   if [ -z "$coords" ]; then
@@ -76,13 +82,16 @@ if [ -z "$coords" -o "$IPLookup" = "false" -o "$coords" = "Try again later" ]; t
   country=`echo $locale | awk -F"," '{ print $3 }'`
 fi
 
+# get timezone (-)HH.00 as integer floating point
+TZ=`date +%z | sed 's/..$/.&/'`
+
+#
 # get illumination table using the form
 # http://aa.usno.navy.mil/data/docs/MoonFraction.php
 # as designed, tz must be positive, tz_sign indicates E (1) or W (-1) of GMT
 # *note: the same results seem to appear when tz is presented as (-)HH.##
-
-# get timezone (-)HH.00 as integer floating point
-TZ=`date +%z | sed 's/..$/.&/'`
+# *note: during DST, results are next time zone and titled "Standard" time
+#
 
 # date details for parsing the table
 YYYY=`date +%Y`
@@ -97,10 +106,10 @@ if [ ! -s $ILLUMTAB ]; then
   do_fail "failed to reach USNO illumination table"
 fi
 
-# get illumination for today
+# get illumination for today; values are #.## with leading zeros
 col=`expr $MM + 1`
 row=`grep "^ ${DD}" $ILLUMTAB`
-illum=`echo $row | awk '{ print $'$col' }' | sed 's/0\.//'`
+illum=`echo $row | awk '{ print $'$col' }' | sed 's/\.//;s/^0*//'`
 
 # attach cardinals
 if [ "$(echo "${latitude} > 0" | bc)" -eq 1 ]; then
@@ -114,8 +123,10 @@ else
   longitude=`echo "${longitude}W" | sed 's/-//'`
 fi
 
+#
 # get moon data using coordinates and timezone
 # http://aa.usno.navy.mil/data/docs/api.php
+#
 today=`date "+%m/%d/%Y"`
 now=`date "+%H:%M"`
 BASEURL="http://api.usno.navy.mil/rstt/oneday?ID=${USNOID}&date=${today}&time=${now}"
@@ -143,7 +154,7 @@ astrodata=`echo $astrodata |\
 astrodata=`echo $astrodata |\
  sed 's/ \}$/, \"illum\":\"'"${illum}"'\" }/'`
 
-# append our location in case we did an IPLookup
+# append our location in case we did a getIP
 astrodata=`echo $astrodata |\
  sed 's/ \}$/, \"city\": \"'${city}'\", \"region\": \"'${region}'\", \"country\": \"'${country}'\" }/'`
 
@@ -152,6 +163,5 @@ astrodata=`echo $astrodata | sed 's/%20/ /g'`
 
 echo $astrodata
 
-# clean up
 /bin/rm -f $ILLUMTAB
 
