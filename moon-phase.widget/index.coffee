@@ -179,13 +179,6 @@ renderMoonData: (data) ->
     if moon_age > 0.5
       moon_age = moon_age - 0.5
 
-# ###FIXME
-  console.error 'Moon age:', moon_age
-  console.error 'Floored :', Math.floor(moon_age)
-  console.error 'Rounded :', Math.round(moon_age)
-  icon = @getIcon(Math.floor(moon_age), @option.iconSet)
-  console.error icon
-
   moon_age = (moon_age).toFixed(1)
   moonEl.find('.icon').html @getIcon(Math.floor(moon_age), @option.iconSet)
   moonEl.find('.phase').text "#{curphase}"

@@ -107,9 +107,11 @@ if [ ! -s $ILLUMTAB ]; then
 fi
 
 # get illumination for today; values are #.## with leading zeros
-col=`expr $MM + 1`
-row=`grep "^ ${DD}" $ILLUMTAB`
-illum=`echo $row | awk '{ print $'$col' }' | sed 's/\.//;s/^0*//'`
+# awk breaks because shorter months leave blank columns
+# count characters: Jan in column 9, add 9 for each month after
+col=`expr $MM \* 9`
+len=`expr $col + 3`
+illum=`grep "^ ${DD}" $ILLUMTAB | cut -c${col}-${len} | sed 's/\.//;s/^0*//'`
 
 # attach cardinals
 if [ "$(echo "${latitude} > 0" | bc)" -eq 1 ]; then
