@@ -180,13 +180,14 @@ renderMoonData: (data) ->
 
   if data.curphase?
     curphase = data.curphase
-    # when key phase names appear, ensure matching icons
-    if curphase is "New Moon" then      icon_age = 0
-    if curphase is "First Quarter" then icon_age = 7
-    if curphase is "Full Moon" then     icon_age = 14
-    if curphase is "Last Quarter" then  icon_age = 21
   else
     curphase = data.closestphase.phase
+
+  # when key phase names appear, ensure matching icons
+  if curphase is "New Moon" then      icon_age = 0
+  if curphase is "First Quarter" then icon_age = 7
+  if curphase is "Full Moon" then     icon_age = 14
+  if curphase is "Last Quarter" then  icon_age = 21
 
   moonEl.find('.icon').html @getIcon(icon_age, @option.iconSet)
   moon_age = (moon_age).toFixed(1)
