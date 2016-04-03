@@ -174,7 +174,7 @@ renderMoonData: (data) ->
   # only 28 days in the moon icon set (sidereal month)
   # have icon days scaled up to 1.05 to cover the gap
   if moon_age < 1.05
-    icon_age = moon_age
+    icon_age = Math.round(moon_age)
   else
     icon_age = Math.round(moon_age / 1.05)
 
