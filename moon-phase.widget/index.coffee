@@ -171,16 +171,25 @@ renderMoonData: (data) ->
   # moon icon and phase name
   #
 
+  # only 28 days in the moon icon set (sidereal month)
+  # have icon days scaled up to 1.05 to cover the gap
+  if moon_age < 1.05
+    icon_age = moon_age
+  else
+    icon_age = Math.round(moon_age / 1.05)
+
   if data.curphase?
     curphase = data.curphase
+    # when key phase names appear, ensure matching icons
+    if curphase is "New Moon" then      icon_age = 0
+    if curphase is "First Quarter" then icon_age = 7
+    if curphase is "Full Moon" then     icon_age = 14
+    if curphase is "Last Quarter" then  icon_age = 21
   else
     curphase = data.closestphase.phase
-    # nudge things back a bit for the icon render?
-    if moon_age > 0.5
-      moon_age = moon_age - 0.5
 
+  moonEl.find('.icon').html @getIcon(icon_age, @option.iconSet)
   moon_age = (moon_age).toFixed(1)
-  moonEl.find('.icon').html @getIcon(Math.floor(moon_age), @option.iconSet)
   moonEl.find('.phase').text "#{curphase}"
 
   #
@@ -311,13 +320,9 @@ getIcon: (code, iconSet) ->
     @getShadowIcon(code)
 
 getLitIcon: (code) ->
-  # wrap day 29.x around to zero again
-  if code > 28 then code = 0
   @iconLitMapping[code]
 
 getShadowIcon: (code) ->
-  # wrap day 29.x around to zero again
-  if code > 28 then code = 0
   @iconShadowMapping[code]
 
 iconLitMapping:
