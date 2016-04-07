@@ -112,6 +112,9 @@ fi
 col=`expr $MM \* 9`
 len=`expr $col + 3`
 illum=`grep "^ ${DD}" $ILLUMTAB | cut -c${col}-${len} | sed 's/\.//;s/^0*//'`
+if [ -z $illum ]; then
+  illum="0"
+fi
 
 # attach cardinals
 if [ "$(echo "${latitude} > 0" | bc)" -eq 1 ]; then
