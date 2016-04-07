@@ -192,7 +192,7 @@ renderMoonData: (data) ->
   # when key illuminations appear, ensure matching phase name
   if data.illum is "0"
     curphase = "New Moon"
-  if data.illum is "50" and moon_age < (synodic_month / 4)
+  if data.illum is "50" and moon_age < (synodic_month / 2)
     curphase = "First Quarter"
   if data.illum is "100"
     curphase = "Full Moon"
