@@ -19,9 +19,10 @@ These can be set by editing the `index.coffee` file.
 If no locale (city, region) is set, the widget will do a lookup based on your IP.
 I recommend saving yourself an API call and setting it: freegeoip doesn't always cooperate.
 
-The font, icon, and colour settings do what you'd expect.
-* Fonts are scaled with respect to others to give the widget balance: change at your discretion.
-* All text is one colour, the header `Rises, Upper Transit, Sets` can use another.
+The font, icon, and color settings do what you'd expect.
+* Fonts are scaled with respect to others through the base fontSize.
+* All text is one color; the header `Rises, Upper Transit, Sets` uses another muted color.
+* If a background is desired, set the widget's background color and an opacity above 0.
 * All but two data elements -- moon icon and phase name -- can be disabled by setting their option to
 `false`.
 
