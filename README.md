@@ -1,5 +1,5 @@
 # Moon Phase
-A widget for [Übersicht](http://tracesof.net/uebersicht/).  In beta.
+A widget for [Übersicht](http://tracesof.net/uebersicht/).
 
 ![Lit moon](lit-moon.jpg)
 
