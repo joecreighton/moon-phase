@@ -284,8 +284,11 @@ renderMoonData: (data) ->
 
 renderError: (data) ->
   moonEl = @$domEl.find('.moon')
-  moonEl.find('.current').text "moon-phase: #{data.message}"
-  moonEl.append "<div class='error'>moon-phase: #{data.message}</div>"
+  moonEl.find('.current').text "#{data.message}"
+  if /geocode/i.test(data.message)
+    moonEl.append "<div class='error'>if waking from sleep, try a refresh</div>"
+  else
+    moonEl.append "<div class='error'>#{data.message}</div>"
 
 
 update: (output, domEl) ->
