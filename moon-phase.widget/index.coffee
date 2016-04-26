@@ -173,7 +173,7 @@ renderMoonData: (data) ->
 
   # only 28 days in the moon icon set (sidereal month)
   # have icon days scaled up to 1.05 to cover the gap
-  if moon_age < 1.05
+  if moon_age < 14.5
     icon_age = Math.round(moon_age)
   else
     icon_age = Math.round(moon_age / 1.05)
@@ -234,12 +234,13 @@ renderMoonData: (data) ->
       if data.prevmoondata?
         phenName = @returnPhenNames("#{data.prevmoondata[0].phen}", "prev")
         phen.append "<div>#{phenName}</div>"
-      else if data.nextmoondata?
-        phenName = @returnPhenNames("#{data.nextmoondata[0].phen}", "next")
-        phen.append "<div>#{phenName}</div>"
     for d in data.moondata
       phenName = @returnPhenNames("#{d.phen}", "curr")
       phen.append "<div>#{phenName}</div>"
+    if count < 3
+      if data.nextmoondata?
+        phenName = @returnPhenNames("#{data.nextmoondata[0].phen}", "next")
+        phen.append "<div>#{phenName}</div>"
 
     time = moonEl.find('.phentimes')
     time.empty()
@@ -249,17 +250,18 @@ renderMoonData: (data) ->
         if @option.showAMPM
           my_time = @returnAMPM(my_time)
         time.append "<div>#{my_time}</div>"
-      else if data.nextmoondata?
-        my_time = data.nextmoondata[0].time
-        if @option.showAMPM
-          my_time = @returnAMPM(my_time)
-        time.append "<div>#{my_time}</div>"
     for d in data.moondata
       if @option.showAMPM
         my_time = @returnAMPM(d.time)
       else
         my_time = d.time
       time.append "<div>#{my_time}</div>"
+    if count < 3
+      if data.nextmoondata?
+        my_time = data.nextmoondata[0].time
+        if @option.showAMPM
+          my_time = @returnAMPM(my_time)
+        time.append "<div>#{my_time}</div>"
 
   if @option.showClosest
     # closest phase looks both backwards and fowards: determine which
@@ -284,11 +286,8 @@ renderMoonData: (data) ->
 
 renderError: (data) ->
   moonEl = @$domEl.find('.moon')
-  moonEl.find('.current').text "#{data.message}"
-  if /geocode/i.test(data.message)
-    moonEl.append "<div class='error'>if waking from sleep, try a refresh</div>"
-  else
-    moonEl.append "<div class='error'>#{data.message}</div>"
+  moonEl.find('.current').text "moon phase widget error"
+  moonEl.append "<div class='error'>#{data.message}</div>"
 
 
 update: (output, domEl) ->
@@ -317,10 +316,10 @@ returnPhenNames: (code, tense) ->
   if code is "R" and tense is "prev" then return "Rose Yesterday"
   if code is "R" and tense is "curr" then return "Rises"
   if code is "R" and tense is "next" then return "Rises Tomorrow"
-  # UT=Upper Transit
-  if code is "U" and tense is "prev" then return "Upper Transit Yesterday"
+  # U=Upper Transit
+  if code is "U" and tense is "prev" then return "U.T. Yesterday"
   if code is "U" and tense is "curr" then return "Upper Transit"
-  if code is "U" and tense is "next" then return "Upper Transit Tomorrow"
+  if code is "U" and tense is "next" then return "U.T. Tomorrow"
   # S=Sets
   if code is "S" and tense is "prev" then return "Set Yesterday"
   if code is "S" and tense is "curr" then return "Sets"

@@ -4,6 +4,31 @@
 # returns: customized JSON data set of moon data from USNO
 #
 
+do_fail()
+{
+  cat << !
+{ "error": true, "message": "$1" }
+!
+  /bin/rm -f $ILLUMTAB
+  exit
+}
+
+# network/wake-from-sleep test thanks to @Diskutant
+count=0
+while [ 1 ]; do
+  if ping -c 1 -t 1 8.8.8.8 &> /dev/null
+  then
+    break
+  else
+   sleep 2
+  fi
+  count=`expr $count + 1`
+  # sleep 2 x 5 = 10 second wait
+  if [ $count -gt 5 ]; then
+    do_fail "failed to reach the internet"
+  fi
+done
+
 # setup curl options
 CURL="curl -s"
 
@@ -13,15 +38,6 @@ USNOID=UberMoon
 # we need to write a text table to a file; clean up previous/failed runs
 /bin/rm -f moon-phase.widget/illumtab.txt.*
 ILLUMTAB="moon-phase.widget/illumtab.txt.$$"
-
-do_fail()
-{
-  cat << !
-{ "error": true, "message": "$1" }
-!
-  /bin/rm -f $ILLUMTAB
-  exit
-}
 
 # pull passed vars
 if [ $# -eq 2 ]; then
