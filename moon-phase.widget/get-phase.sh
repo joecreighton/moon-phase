@@ -159,6 +159,12 @@ if [ $count -lt 30 ]; then
   do_fail "failed to get expected USNO results"
 fi
 
+# look for US Cyber Command block
+if echo $astrodata | grep "blocked website" > /dev/null
+then
+  do_fail "USNO blocked by US Cyber Command"
+fi
+
 #
 # final cusomizations
 #
